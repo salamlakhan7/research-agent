@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign up | Research Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <main class="min-h-screen grid place-items-center px-5">
+    <div class="glass fade w-full max-w-md p-8">
+      <a href="/" class="title text-2xl font-extrabold">Research Agent</a>
+      <h1 class="text-xl font-semibold mt-5 mb-1">Create your account</h1>
+      <p class="text-slate-400 text-sm mb-6">Unlimited cited briefs, saved history, and personal topic suggestions.</p>
+      <div id="msg" class="text-sm mb-4"></div>
+      <form id="form" data-mode="signup" class="space-y-4">
+        <input id="name" class="field" placeholder="Full name" required />
+        <input id="email" type="email" class="field" placeholder="Email" required />
+        <input id="password" type="password" minlength="8" class="field" placeholder="Password (8+ characters)" required />
+        <button id="submit" class="go w-full">Sign up</button>
+      </form>
+      <p class="text-sm text-slate-400 mt-5 text-center">Already have an account? <a href="/login.html" class="text-sky-300">Log in</a></p>
+    </div>
+  </main>
+  <script src="bg.js"></script>
+  <script src="auth.js"></script>
+</body>
+</html>

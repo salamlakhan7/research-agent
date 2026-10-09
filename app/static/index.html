@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Agent | Stop reading. Start knowing.</title>
+  <meta name="description" content="Give it a topic or links. Get a short, cited brief in minutes." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    html { scroll-behavior: smooth; }
+    section { scroll-margin-top: 90px; }
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    .outline-btn { border: 1px solid rgba(255,255,255,.25); border-radius: 12px; padding: .75rem 1.6rem; font-weight: 600; transition: all .2s; }
+    .outline-btn:hover { border-color: #7c9cff; background: rgba(124,156,255,.1); }
+    .navlink { color: #9aa0c3; transition: color .2s; } .navlink:hover { color: #fff; }
+    .step { padding: 1.1rem; border-radius: 16px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); transition: all .5s; }
+    .step .num { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: .85rem; border: 2px solid #2a2f52; color: #6b7197; transition: all .5s; margin-bottom: .6rem; }
+    .step.lit { border-color: #7c9cff; background: rgba(124,156,255,.1); box-shadow: 0 0 28px rgba(124,156,255,.25); transform: translateY(-4px); }
+    .step.lit .num { border-color: #4fd1ff; color: #4fd1ff; background: rgba(79,209,255,.15); box-shadow: 0 0 16px rgba(79,209,255,.5); }
+    .feat { transition: transform .25s, border-color .25s; } .feat:hover { transform: translateY(-6px); border-color: rgba(124,156,255,.5); }
+    .report { line-height: 1.7; color: #d6d9ee; }
+    .report ul { list-style: disc; padding-left: 1.3rem; margin: .6rem 0; } .report li { margin: .4rem 0; }
+    .report strong { color: #fff; } .report a { color: #7cc4ff; word-break: break-all; }
+    details { border-bottom: 1px solid rgba(255,255,255,.1); padding: 1rem 0; }
+    summary { cursor: pointer; font-weight: 600; } details p { color: #9aa0c3; margin-top: .6rem; }
+    .hero-glow { position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 30%, rgba(124,156,255,.18), transparent 70%); pointer-events: none; }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+
+  <header class="fixed top-0 inset-x-0 z-20 px-4 pt-4">
+    <nav class="glass max-w-6xl mx-auto flex items-center gap-6 px-5 py-3">
+      <a href="/" class="title text-lg font-extrabold">Research Agent</a>
+      <div class="hidden md:flex gap-6 text-sm ml-4">
+        <a href="#flow" class="navlink">Tech Flow</a>
+        <a href="#features" class="navlink">Features</a>
+        <a href="#why" class="navlink">Why us</a>
+        <a href="#contact" class="navlink">Contact</a>
+      </div>
+      <div class="ml-auto flex items-center gap-3 text-sm">
+        <a id="nav-login" href="/login.html" class="navlink">Login</a>
+        <a id="nav-signup" href="/signup.html" class="navlink hidden sm:inline">Sign up</a>
+        <a id="nav-cta" href="#try" class="go !py-2 !px-4 text-sm">Let's give it a try</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="pt-28">
+
+    <section class="relative text-center px-5 pt-16 pb-24 max-w-4xl mx-auto">
+      <div class="hero-glow"></div>
+      <div class="relative reveal">
+        <p class="inline-block text-xs tracking-widest uppercase text-sky-300 border border-sky-300/30 rounded-full px-4 py-1 mb-6">Agentic research, with citations</p>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight leading-tight">Stop reading.<br /><span class="title">Start knowing.</span></h1>
+        <p class="text-slate-400 text-lg md:text-xl mt-6 max-w-2xl mx-auto">Give it a topic or a pile of links. An AI agent plans, searches, reads, and checks its own work, then hands you a short brief where every claim has a source.</p>
+        <div class="flex flex-wrap gap-4 justify-center mt-10">
+          <a href="#try" class="go text-lg">Try it free</a>
+          <a href="#flow" class="outline-btn text-lg">See how it works</a>
+        </div>
+        <p class="text-xs text-slate-500 mt-5">No signup needed for your first brief.</p>
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-5 pb-24 reveal">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="glass p-7">
+          <p class="text-xs uppercase tracking-widest text-red-300 mb-3">Without it</p>
+          <h3 class="text-2xl font-bold mb-3">10 tabs. 2 hours.</h3>
+          <p class="text-slate-400">Open article after article, skim the same facts again and again, lose track of which source said what, and still wonder if you missed something.</p>
+        </div>
+        <div class="glass p-7" style="border-color: rgba(79,209,255,.4)">
+          <p class="text-xs uppercase tracking-widest text-sky-300 mb-3">With Research Agent</p>
+          <h3 class="text-2xl font-bold mb-3">1 brief. A few minutes.</h3>
+          <p class="text-slate-400">Duplicates removed, sources ranked by relevance, each one summarized, and the final brief checked against its sources before you see it.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="flow" class="max-w-6xl mx-auto px-5 pb-24">
+      <div class="text-center mb-10 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold">The <span class="title">Tech Flow</span></h2>
+        <p class="text-slate-400 mt-3">Eight stages, one pipeline. Watch it run.</p>
+      </div>
+      <div id="steps" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 reveal">
+        <div class="step"><div class="num">1</div><h4 class="font-semibold">Intake</h4><p class="text-sm text-slate-400 mt-1">Decides whether you gave a topic or links.</p></div>
+        <div class="step"><div class="num">2</div><h4 class="font-semibold">Planner</h4><p class="text-sm text-slate-400 mt-1">Breaks a topic into focused search questions.</p></div>
+        <div class="step"><div class="num">3</div><h4 class="font-semibold">Searcher</h4><p class="text-sm text-slate-400 mt-1">Finds fresh sources on the live web.</p></div>
+        <div class="step"><div class="num">4</div><h4 class="font-semibold">Reader</h4><p class="text-sm text-slate-400 mt-1">Fetches web pages, PDFs, and YouTube transcripts. Reports any link it cannot read.</p></div>
+        <div class="step"><div class="num">5</div><h4 class="font-semibold">Organizer</h4><p class="text-sm text-slate-400 mt-1">Embeddings remove duplicates, rank relevance, and group sources into themes.</p></div>
+        <div class="step"><div class="num">6</div><h4 class="font-semibold">Summarizer</h4><p class="text-sm text-slate-400 mt-1">A transformer model condenses each source.</p></div>
+        <div class="step"><div class="num">7</div><h4 class="font-semibold">Writer</h4><p class="text-sm text-slate-400 mt-1">An LLM writes the brief using only those sources, with inline citations.</p></div>
+        <div class="step"><div class="num">8</div><h4 class="font-semibold">Critic</h4><p class="text-sm text-slate-400 mt-1">Checks every claim against the sources and sends weak drafts back for revision.</p></div>
+      </div>
+      <p class="text-center text-xs text-slate-500 mt-6">Built with LangGraph, Sentence Transformers, Hugging Face, Groq, and FastAPI.</p>
+    </section>
+
+    <section id="features" class="max-w-6xl mx-auto px-5 pb-24">
+      <div class="text-center mb-10 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold">Everything you need, <span class="title">nothing you don't</span></h2>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">Topic or links</h4><p class="text-slate-400 text-sm">Start from a question, or paste the articles, PDFs, and videos you already have.</p></div>
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">Cited answers</h4><p class="text-slate-400 text-sm">Every point carries a source number, and every source is listed at the end.</p></div>
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">Your length, your style</h4><p class="text-slate-400 text-sm">TL;DR to detailed. Bullets, executive summary, or plain-language ELI5.</p></div>
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">Honest about failures</h4><p class="text-slate-400 text-sm">Blocked or unreadable links are listed, never silently ignored.</p></div>
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">History</h4><p class="text-slate-400 text-sm">Every brief is saved to your account. Reopen, download, or delete anytime.</p></div>
+        <div class="glass feat p-6 reveal"><h4 class="font-semibold text-lg mb-2">Export</h4><p class="text-slate-400 text-sm">Download any brief as Markdown and drop it into your notes or docs.</p></div>
+      </div>
+    </section>
+
+    <section id="why" class="max-w-4xl mx-auto px-5 pb-24 reveal">
+      <div class="glass p-8 md:p-10">
+        <h2 class="text-3xl font-extrabold mb-6">Why you can <span class="title">trust the brief</span></h2>
+        <div class="grid md:grid-cols-3 gap-6 text-sm">
+          <div><h4 class="font-semibold mb-1">Grounded, not guessed</h4><p class="text-slate-400">The writer is limited to the numbered sources it was given, so it has nothing to invent from.</p></div>
+          <div><h4 class="font-semibold mb-1">Self-checking</h4><p class="text-slate-400">A critic stage reviews the draft against the sources and requests a rewrite when something is unsupported.</p></div>
+          <div><h4 class="font-semibold mb-1">Verify in one click</h4><p class="text-slate-400">Citations point to real URLs, so you can check any claim yourself.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="try" class="max-w-3xl mx-auto px-5 pb-24">
+      <div class="text-center mb-8 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold">Try it <span class="title">right now</span></h2>
+        <p class="text-slate-400 mt-3">Type a topic or paste a link. Your first brief is free, no signup.</p>
+      </div>
+      <div class="glass p-6 reveal">
+        <textarea id="try-input" rows="3" class="field mb-4" placeholder="e.g. Impact of generative AI on software jobs   (or paste a link)"></textarea>
+        <div class="flex items-center gap-4">
+          <p id="try-status" class="text-xs text-slate-500 flex-1"></p>
+          <button id="try-run" class="go">Generate brief</button>
+        </div>
+        <div id="try-gate" class="hidden mt-6 text-center border border-sky-300/30 rounded-xl p-6 bg-sky-300/5">
+          <p class="font-semibold mb-1">That was your free brief.</p>
+          <p class="text-slate-400 text-sm mb-4">Create a free account for unlimited briefs, saved history, and topic suggestions.</p>
+          <a href="/signup.html" class="go">Create free account</a>
+          <a href="/login.html" class="navlink ml-4 text-sm">Log in</a>
+        </div>
+        <div id="try-result" class="hidden mt-6 border-t border-white/10 pt-5">
+          <article id="try-output" class="report"></article>
+          <p class="text-xs text-slate-500 mt-4">Guest briefs are not saved. Sign up to keep your history.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-5 pb-24 reveal">
+      <h2 class="text-2xl font-extrabold mb-1 text-center">Example output</h2>
+      <p class="text-center text-slate-500 text-sm mb-6">From a real run on the original Transformer paper.</p>
+      <div class="glass p-6 report">
+        <ul>
+          <li>Introduces the <strong>Transformer</strong>, a neural network architecture that relies <strong>solely on attention mechanisms</strong>, eliminating recurrence [1].</li>
+          <li>Enables <strong>global dependencies</strong> between input and output via self-attention [1].</li>
+          <li>Provides <strong>significantly greater parallelization</strong>, allowing faster training compared to recurrent models [1].</li>
+          <li>Achieves <strong>superior translation quality</strong> and sets a new <strong>state-of-the-art</strong> on benchmark machine-translation tasks [1].</li>
+        </ul>
+        <p class="text-sm text-slate-500"><strong>Sources:</strong> [1] arxiv.org/pdf/1706.03762</p>
+      </div>
+    </section>
+
+    <section id="faq" class="max-w-3xl mx-auto px-5 pb-24 reveal">
+      <h2 class="text-3xl font-extrabold mb-4 text-center">Questions</h2>
+      <details><summary>Is it free?</summary><p>Your first brief needs no account. After that, a free account unlocks more briefs and your saved history.</p></details>
+      <details><summary>How long does a brief take?</summary><p>Usually a few minutes. The pipeline reads and summarizes real sources, so it is thorough rather than instant.</p></details>
+      <details><summary>Can it read PDFs and videos?</summary><p>Yes. It reads web pages, PDFs, and YouTube videos that have transcripts. Anything it cannot read is reported back to you.</p></details>
+      <details><summary>Can the brief be wrong?</summary><p>Any AI system can make mistakes. That is why every claim is cited and a critic stage checks the draft, but you should verify anything important using the linked sources.</p></details>
+    </section>
+
+    <section id="contact" class="max-w-3xl mx-auto px-5 pb-20 text-center reveal">
+      <div class="glass p-8">
+        <h2 class="text-2xl font-extrabold mb-2">Get in touch</h2>
+        <p class="text-slate-400 mb-5">Feedback, ideas, or collaboration.</p>
+        <div class="flex flex-wrap gap-4 justify-center text-sm">
+          <a class="outline-btn" href="mailto:salamlakhan7@gmail.com">Email</a>
+          <a class="outline-btn" href="https://github.com/salamlakhan7" target="_blank" rel="noopener">GitHub</a>
+          <a class="outline-btn" href="https://linkedin.com/in/abdul-salam-501b2025b" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="relative z-10 text-center text-xs text-slate-500 pb-10">
+    Research Agent. Built by Abdul Salam.
+  </footer>
+
+  <script src="bg.js"></script>
+  <script src="landing.js"></script>
+</body>
+</html>

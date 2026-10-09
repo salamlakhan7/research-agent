@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Research Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    .nav { display: block; width: 100%; text-align: left; padding: .65rem .9rem; border-radius: 10px; color: #9aa0c3; transition: all .2s; }
+    .nav:hover { color: #fff; background: rgba(255,255,255,.05); }
+    .nav.on { color: #fff; background: linear-gradient(135deg, rgba(91,124,255,.35), rgba(154,91,255,.35)); box-shadow: inset 0 0 0 1px rgba(124,156,255,.4); }
+    .seg button { padding: .45rem 1.1rem; border-radius: 10px; color: #9aa0c3; transition: all .2s; }
+    .seg button.on { background: linear-gradient(135deg, #5b7cff, #9a5bff); color: #fff; box-shadow: 0 0 18px rgba(124,156,255,.5); }
+    .stage { display: flex; flex-direction: column; align-items: center; gap: .4rem; font-size: .7rem; color: #6b7197; text-transform: capitalize; }
+    .ring { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #2a2f52; display: grid; place-items: center; transition: all .4s; }
+    .ring svg { width: 16px; height: 16px; opacity: 0; transition: opacity .3s; }
+    .stage.active .ring { border-color: #7c9cff; animation: pulse 1.2s infinite; }
+    .stage.active { color: #cdd6ff; }
+    .stage.done .ring { border-color: #4fd1ff; background: rgba(79,209,255,.15); box-shadow: 0 0 16px rgba(79,209,255,.5); }
+    .stage.done .ring svg { opacity: 1; }
+    .stage.done { color: #9fe4ff; }
+    .stage.skip { opacity: .3; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(124,156,255,.6); } 50% { box-shadow: 0 0 0 9px rgba(124,156,255,0); } }
+    .report { line-height: 1.7; color: #d6d9ee; }
+    .report ul { list-style: disc; padding-left: 1.3rem; margin: .6rem 0; }
+    .report li { margin: .4rem 0; } .report p { margin: .6rem 0; } .report strong { color: #fff; }
+    .report a { color: #7cc4ff; word-break: break-all; }
+    .hist-item { display: block; width: 100%; text-align: left; padding: .8rem 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,.08); margin-bottom: .6rem; transition: all .2s; }
+    .hist-item:hover { border-color: #7c9cff; background: rgba(124,156,255,.08); }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <main class="md:flex gap-6 p-5 max-w-6xl mx-auto min-h-screen">
+
+    <aside class="glass md:w-60 md:shrink-0 p-5 mb-5 md:mb-0 md:sticky md:top-5 md:self-start fade">
+      <a href="/" class="title text-xl font-extrabold block mb-1">Research Agent</a>
+      <p class="text-xs text-slate-400 mb-5">Signed in as <span id="uname" class="text-slate-200">...</span></p>
+      <nav class="space-y-1">
+        <button class="nav on" data-panel="research">Research</button>
+        <button class="nav" data-panel="suggested">Suggested Topics</button>
+        <button class="nav" data-panel="trending">Trending</button>
+        <button class="nav" data-panel="history">History</button>
+        <button class="nav" data-panel="saved">Saved</button>
+        <button class="nav" data-panel="usage">Usage</button>
+        <button class="nav" data-panel="settings">Settings</button>
+
+      </nav>
+      <button id="logout" class="nav mt-6 !text-red-300">Log out</button>
+    </aside>
+
+    <section class="flex-1 min-w-0 fade">
+
+      <div id="panel-research" class="panel">
+        <div class="glass p-6 mb-5">
+          <div class="seg inline-flex gap-1 p-1 rounded-xl bg-black/30 mb-4">
+            <button id="mode-topic" class="on">Topic</button>
+            <button id="mode-links">Links</button>
+          </div>
+          <textarea id="input" rows="4" class="field mb-4" placeholder="e.g. Risks of AI in healthcare"></textarea>
+          <div class="flex flex-wrap gap-3 items-center">
+            <select id="length" class="field !w-auto">
+              <option value="tldr">TL;DR</option>
+              <option value="short" selected>Short</option>
+              <option value="detailed">Detailed</option>
+            </select>
+            <select id="style" class="field !w-auto">
+              <option value="bullets" selected>Bullets</option>
+              <option value="an executive summary">Executive summary</option>
+              <option value="ELI5 (very simple language)">ELI5</option>
+            </select>
+            <button id="run" class="go ml-auto">Generate</button>
+          </div>
+        </div>
+        <div class="glass p-5 mb-5">
+          <div id="pipeline" class="grid grid-cols-4 sm:grid-cols-8 gap-3"></div>
+          <div id="status" class="text-xs text-slate-500 mt-4 text-center"></div>
+        </div>
+        <div id="card" class="glass p-6 hidden">
+          <article id="output" class="report"></article>
+                    <div id="related" class="mt-6 hidden">
+            <p class="text-xs uppercase tracking-widest text-sky-300 mb-2">Related questions</p>
+            <div id="related-list"></div>
+          </div>
+          <button id="download" class="go mt-5 !py-2 !px-4 text-sm">Download .md</button>
+        </div>
+      </div>
+            <div id="panel-suggested" class="panel hidden">
+        <div class="glass p-6">
+          <h2 class="text-lg font-semibold mb-1">Suggested for you</h2>
+          <p id="sugg-note" class="text-xs text-slate-400 mb-4"></p>
+          <div id="sugg-list"></div>
+        </div>
+      </div>
+
+      <div id="panel-trending" class="panel hidden">
+        <div class="glass p-6 mb-5">
+          <h2 class="text-lg font-semibold mb-1">Popular on Research Agent</h2>
+          <p class="text-xs text-slate-400 mb-4">Topics researched by multiple users.</p>
+          <div id="pop-list"></div>
+        </div>
+        <div class="glass p-6">
+          <h2 class="text-lg font-semibold mb-1">Trending research topics</h2>
+          <p class="text-xs text-slate-400 mb-2">Click any topic to research it.</p>
+          <div id="cur-list"></div>
+        </div>
+      </div>
+            <div id="panel-saved" class="panel hidden">
+        <div class="glass p-6">
+          <h2 class="text-lg font-semibold mb-4">Saved briefs</h2>
+          <div id="sav-list"></div>
+        </div>
+      </div>
+
+      <div id="panel-usage" class="panel hidden">
+        <div class="glass p-6">
+          <h2 class="text-lg font-semibold mb-4">Your usage</h2>
+          <div class="grid grid-cols-3 gap-4 mb-5 text-center">
+            <div class="glass p-4"><div id="u-today" class="text-3xl font-extrabold title">0</div><div class="text-xs text-slate-400 mt-1">Today</div></div>
+            <div class="glass p-4"><div id="u-total" class="text-3xl font-extrabold title">0</div><div class="text-xs text-slate-400 mt-1">All time</div></div>
+            <div class="glass p-4"><div id="u-saved" class="text-3xl font-extrabold title">0</div><div class="text-xs text-slate-400 mt-1">Saved</div></div>
+          </div>
+          <div class="h-2 rounded-full bg-white/10 overflow-hidden"><div id="u-bar" class="h-full" style="width:0;background:linear-gradient(90deg,#5b7cff,#4fd1ff)"></div></div>
+          <p id="u-note" class="text-xs text-slate-400 mt-2"></p>
+        </div>
+      </div>
+
+      <div id="panel-settings" class="panel hidden">
+        <div class="glass p-6 mb-5">
+          <h2 class="text-lg font-semibold mb-3">Profile</h2>
+          <div class="flex gap-3"><input id="s-name" class="field" placeholder="Your name" /><button id="s-name-save" class="go">Save</button></div>
+        </div>
+        <div class="glass p-6 mb-5">
+          <h2 class="text-lg font-semibold mb-3">Change password</h2>
+          <div class="space-y-3">
+            <input id="s-cur" type="password" class="field" placeholder="Current password" />
+            <input id="s-new" type="password" class="field" placeholder="New password (8+ characters)" />
+            <button id="s-pw-save" class="go">Update password</button>
+          </div>
+        </div>
+        <div class="glass p-6 mb-5" style="border-color: rgba(248,113,113,.35)">
+          <h2 class="text-lg font-semibold mb-1 text-red-300">Delete account</h2>
+          <p class="text-xs text-slate-400 mb-3">Permanently removes your account and all saved briefs.</p>
+          <div class="flex gap-3"><input id="s-del" type="password" class="field" placeholder="Confirm with your password" /><button id="s-del-go" class="go" style="background:#b91c1c;box-shadow:none">Delete</button></div>
+        </div>
+        <p id="s-msg" class="text-sm"></p>
+      </div>
+      <div id="panel-history" class="panel hidden">
+        <div class="glass p-6 mb-5">
+          <h2 class="text-lg font-semibold mb-4">Your briefs</h2>
+          <div id="hist-list"></div>
+        </div>
+        <div id="viewer" class="glass p-6 hidden">
+          <article id="viewer-body" class="report"></article>
+          <div class="flex gap-3 mt-5">
+            <button id="v-download" class="go !py-2 !px-4 text-sm">Download .md</button>
+            <button id="v-save" class="nav !w-auto">Save</button>
+            <button id="v-delete" class="nav !w-auto !text-red-300">Delete</button>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+  <script src="bg.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
